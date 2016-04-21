@@ -23,7 +23,6 @@ import alluxio.exception.InvalidPathException;
 import alluxio.exception.PreconditionMessage;
 import alluxio.master.MasterContext;
 import alluxio.master.block.ContainerIdGenerable;
-import alluxio.master.file.PermissionChecker;
 import alluxio.master.file.options.CreateDirectoryOptions;
 import alluxio.master.file.options.CreateFileOptions;
 import alluxio.master.file.options.CreatePathOptions;
@@ -129,10 +128,16 @@ public final class InodeTree implements JournalCheckpointStreamable {
       mInodes.add(mRoot);
       mCachedInode = mRoot;
     }
-    PermissionChecker.initializeFileSystem(
-        MasterContext.getConf().getBoolean(Constants.SECURITY_AUTHORIZATION_PERMISSION_ENABLED),
-        mRoot.getUserName(),
-        MasterContext.getConf().get(Constants.SECURITY_AUTHORIZATION_PERMISSION_SUPERGROUP));
+  }
+
+  /**
+   * @return username of root of inode tree, null if the inode tree is not initialized
+   */
+  public String getRootUserName() {
+    if (mRoot == null) {
+      return null;
+    }
+    return mRoot.getUserName();
   }
 
   /**
@@ -193,7 +198,7 @@ public final class InodeTree implements JournalCheckpointStreamable {
   public Inode<?> getInodeByPath(AlluxioURI path)
       throws InvalidPathException, FileDoesNotExistException {
     TraversalResult traversalResult =
-        traverseToInode(PathUtils.getPathComponents(path.toString()), false);
+        traverseToInode(PathUtils.getPathComponents(path.getPath()), false);
     if (!traversalResult.isFound()) {
       throw new FileDoesNotExistException(ExceptionMessage.PATH_DOES_NOT_EXIST.getMessage(path));
     }
@@ -201,6 +206,30 @@ public final class InodeTree implements JournalCheckpointStreamable {
   }
 
   /**
+   * Returns an inode of a file given its path.
+   *
+   * @param path the path to get the inode for
+   * @return the inode with the given path
+   * @throws InvalidPathException if the path is invalid
+   * @throws FileDoesNotExistException if the file does not exist or it is a directory
+   */
+  public InodeFile getInodeFileByPath(AlluxioURI path) throws InvalidPathException,
+      FileDoesNotExistException {
+    TraversalResult traversalResult =
+        traverseToInode(PathUtils.getPathComponents(path.toString()), false);
+    if (!traversalResult.isFound()) {
+      throw new FileDoesNotExistException(ExceptionMessage.PATH_DOES_NOT_EXIST.getMessage(path));
+    }
+    Inode inode = traversalResult.getInode();
+    if (!inode.isFile()) {
+      throw new FileDoesNotExistException(ExceptionMessage.PATH_MUST_BE_FILE.getMessage(path));
+    }
+    return (InodeFile) inode;
+  }
+
+  /**
+   * Returns a list of existing inodes on the given path.
+   *
    * @param path the path to get the inodes list for
    * @return the inodes list with the given path
    * @throws InvalidPathException if the path is invalid
@@ -377,11 +406,12 @@ public final class InodeTree implements JournalCheckpointStreamable {
 
     if (toPersistDirectories.size() > 0) {
       Inode<?> lastToPersistInode = toPersistDirectories.get(toPersistDirectories.size() - 1);
-      String ufsPath = mMountTable.resolve(getPath(lastToPersistInode)).toString();
-      UnderFileSystem ufs = UnderFileSystem.get(ufsPath, MasterContext.getConf());
+      MountTable.Resolution resolution = mMountTable.resolve(getPath(lastToPersistInode));
+      String ufsUri = resolution.getUri().toString();
+      UnderFileSystem ufs = resolution.getUfs();
       // Persists only the last directory, recursively creating necessary parent directories. Even
       // if the directory already exists in the ufs, we mark it as persisted.
-      if (ufs.exists(ufsPath) || ufs.mkdirs(ufsPath, true)) {
+      if (ufs.exists(ufsUri) || ufs.mkdirs(ufsUri, true)) {
         for (Inode<?> inode : toPersistDirectories) {
           inode.setPersistenceState(PersistenceState.PERSISTED);
         }

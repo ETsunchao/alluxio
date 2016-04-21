@@ -36,7 +36,7 @@ public enum ExceptionMessage {
   BLOCK_UNAVAILABLE("Block {0} is not available in Alluxio"),
   CANNOT_REQUEST_SPACE("Unable to request space from worker"),
   NO_LOCAL_WORKER("Local {0} requested but there is no local worker"),
-  NO_WORKER_AVAILABLE_ON_HOST("No Alluxio worker available for host {0}"),
+  NO_WORKER_AVAILABLE_ON_ADDRESS("No Alluxio worker available for address {0}"),
   NO_WORKER_AVAILABLE("No available Alluxio worker found"),
 
   // block lock manager
@@ -55,7 +55,7 @@ public enum ExceptionMessage {
   // instream/outstream
   FAILED_CACHE("Failed to cache: {0}"),
   FAILED_CREATE("Failed to create {0}"),
-  FAILED_SEEK_FORWARD("Failed to seek forward to {0}"),
+  FAILED_SEEK("Failed to seek to {0}"),
   FAILED_SKIP("Failed to skip {0}"),
   INSTREAM_CANNOT_SKIP("The underlying BlockInStream could not skip {0}"),
   READ_CLOSED_STREAM("Cannot read from a closed stream"),

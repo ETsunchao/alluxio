@@ -11,6 +11,7 @@
 
 package alluxio.underfs.s3;
 
+import alluxio.AlluxioURI;
 import alluxio.Configuration;
 import alluxio.Constants;
 import alluxio.underfs.UnderFileSystem;
@@ -35,6 +36,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,12 +78,13 @@ public class S3UnderFileSystem extends UnderFileSystem {
   /**
    * Constructs a new instance of {@link S3UnderFileSystem}.
    *
-   * @param bucketName the name of the bucket
+   * @param uri the {@link AlluxioURI} for this UFS
    * @param conf the configuration for Alluxio
    * @throws ServiceException when a connection to S3 could not be created
    */
-  public S3UnderFileSystem(String bucketName, Configuration conf) throws ServiceException {
-    super(conf);
+  public S3UnderFileSystem(AlluxioURI uri, Configuration conf) throws ServiceException {
+    super(uri, conf);
+    String bucketName = uri.getHost();
     Preconditions.checkArgument(conf.containsKey(Constants.S3_ACCESS_KEY),
         "Property " + Constants.S3_ACCESS_KEY + " is required to connect to S3");
     Preconditions.checkArgument(conf.containsKey(Constants.S3_SECRET_KEY),
@@ -179,16 +182,17 @@ public class S3UnderFileSystem extends UnderFileSystem {
   }
 
   /**
-   * Gets the block size in bytes. There is no concept of a block in S3, however the maximum allowed
-   * size of one file is currently 5 TB.
+   * Gets the block size in bytes. There is no concept of a block in S3 and the maximum size of
+   * one put is 5 GB, and the max size of a multi-part upload is 5 TB. This method defaults to the
+   * default user block size in Alluxio.
    *
    * @param path the file name
-   * @return 5 TB in bytes
+   * @return the default Alluxio user block size
    * @throws IOException this implementation will not throw this exception, but subclasses may
    */
   @Override
   public long getBlockSizeByte(String path) throws IOException {
-    return Constants.TB * 5;
+    return mConfiguration.getBytes(Constants.USER_BLOCK_SIZE_BYTES_DEFAULT);
   }
 
   // Not supported
@@ -459,7 +463,22 @@ public class S3UnderFileSystem extends UnderFileSystem {
       // If no exception is thrown, the key exists as a folder
       return true;
     } catch (ServiceException s) {
-      return false;
+      // It is possible that the folder has not been encoded as a _$folder$ file
+      try {
+        String dir = stripPrefixIfPresent(key);
+        String dirPrefix = dir.endsWith(PATH_SEPARATOR) ? dir : dir + PATH_SEPARATOR;
+        // Check if anything begins with <folder_path>/
+        S3Object[] objs = mClient.listObjects(mBucketName, dirPrefix, "");
+        // If there are, this is a folder and we can create the necessary metadata
+        if (objs.length > 0) {
+          mkdirsInternal(dir);
+          return true;
+        } else {
+          return false;
+        }
+      } catch (ServiceException s2) {
+        return false;
+      }
     }
   }
 
@@ -492,15 +511,18 @@ public class S3UnderFileSystem extends UnderFileSystem {
       // managed "directories"
       S3Object[] objs = mClient.listObjects(mBucketName, path, "");
       if (recursive) {
-        String[] ret = new String[objs.length];
-        for (int i = 0; i < objs.length; i++) {
+        List<String> ret = new ArrayList<>();
+        for (S3Object obj : objs) {
           // Remove parent portion of the key
-          String child = getChildName(objs[i].getKey(), path);
+          String child = getChildName(obj.getKey(), path);
           // Prune the special folder suffix
           child = stripFolderSuffixIfPresent(child);
-          ret[i] = child;
+          // Only add if the path is not empty (removes results equal to the path)
+          if (!child.isEmpty()) {
+            ret.add(child);
+          }
         }
-        return ret;
+        return ret.toArray(new String[ret.size()]);
       }
       // Non recursive list
       Set<String> children = new HashSet<String>();
@@ -513,7 +535,9 @@ public class S3UnderFileSystem extends UnderFileSystem {
         // Prune the special folder suffix
         child = stripFolderSuffixIfPresent(child);
         // Add to the set of children, the set will deduplicate.
-        children.add(child);
+        if (!child.isEmpty()) {
+          children.add(child);
+        }
       }
       return children.toArray(new String[children.size()]);
     } catch (ServiceException e) {

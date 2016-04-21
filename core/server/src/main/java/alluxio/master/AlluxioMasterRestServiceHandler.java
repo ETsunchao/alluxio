@@ -14,6 +14,7 @@ package alluxio.master;
 import alluxio.Configuration;
 import alluxio.Constants;
 import alluxio.MasterStorageTierAssoc;
+import alluxio.RestUtils;
 import alluxio.Version;
 import alluxio.master.block.BlockMaster;
 import alluxio.underfs.UnderFileSystem;
@@ -90,7 +91,7 @@ public final class AlluxioMasterRestServiceHandler {
         configuration.put(key, (String) entry.getValue());
       }
     }
-    return Response.ok(configuration).build();
+    return RestUtils.createResponse(configuration);
   }
 
   /**
@@ -101,7 +102,7 @@ public final class AlluxioMasterRestServiceHandler {
   @Path(GET_RPC_ADDRESS)
   @ReturnType("java.lang.String")
   public Response getRpcAddress() {
-    return Response.ok(mMaster.getMasterAddress().toString()).build();
+    return RestUtils.createResponse(mMaster.getMasterAddress().toString());
   }
 
   /**
@@ -132,7 +133,7 @@ public final class AlluxioMasterRestServiceHandler {
     }
     metrics.put(filesPinnedProperty, filesPinned.getValue().longValue());
 
-    return Response.ok(metrics).build();
+    return RestUtils.createResponse(metrics);
   }
 
   /**
@@ -143,7 +144,7 @@ public final class AlluxioMasterRestServiceHandler {
   @Path(GET_START_TIME_MS)
   @ReturnType("java.lang.Long")
   public Response getStartTimeMs() {
-    return Response.ok(mMaster.getStartTimeMs()).build();
+    return RestUtils.createResponse(mMaster.getStartTimeMs());
   }
 
   /**
@@ -154,7 +155,7 @@ public final class AlluxioMasterRestServiceHandler {
   @Path(GET_UPTIME_MS)
   @ReturnType("java.lang.Long")
   public Response getUptimeMs() {
-    return Response.ok(mMaster.getUptimeMs()).build();
+    return RestUtils.createResponse(mMaster.getUptimeMs());
   }
 
   /**
@@ -165,7 +166,7 @@ public final class AlluxioMasterRestServiceHandler {
   @Path(GET_VERSION)
   @ReturnType("java.lang.String")
   public Response getVersion() {
-    return Response.ok(Version.VERSION).build();
+    return RestUtils.createResponse(Version.VERSION);
   }
 
   /**
@@ -176,7 +177,7 @@ public final class AlluxioMasterRestServiceHandler {
   @Path(GET_CAPACITY_BYTES)
   @ReturnType("java.lang.Long")
   public Response getCapacityBytes() {
-    return Response.ok(mBlockMaster.getCapacityBytes()).build();
+    return RestUtils.createResponse(mBlockMaster.getCapacityBytes());
   }
 
   /**
@@ -187,7 +188,7 @@ public final class AlluxioMasterRestServiceHandler {
   @Path(GET_USED_BYTES)
   @ReturnType("java.lang.Long")
   public Response getUsedBytes() {
-    return Response.ok(mBlockMaster.getUsedBytes()).build();
+    return RestUtils.createResponse(mBlockMaster.getUsedBytes());
   }
 
   /**
@@ -198,7 +199,7 @@ public final class AlluxioMasterRestServiceHandler {
   @Path(GET_FREE_BYTES)
   @ReturnType("java.lang.Long")
   public Response getFreeBytes() {
-    return Response.ok(mBlockMaster.getCapacityBytes() - mBlockMaster.getUsedBytes()).build();
+    return RestUtils.createResponse(mBlockMaster.getCapacityBytes() - mBlockMaster.getUsedBytes());
   }
 
   /**
@@ -210,10 +211,11 @@ public final class AlluxioMasterRestServiceHandler {
   @ReturnType("java.lang.Long")
   public Response getUfsCapacityBytes() {
     try {
-      return Response.ok(mUfs.getSpace(mUfsRoot, UnderFileSystem.SpaceType.SPACE_TOTAL)).build();
+      return RestUtils
+          .createResponse(mUfs.getSpace(mUfsRoot, UnderFileSystem.SpaceType.SPACE_TOTAL));
     } catch (IOException e) {
       LOG.warn(e.getMessage());
-      return Response.serverError().entity(e.getMessage()).build();
+      return RestUtils.createErrorResponse(e.getMessage());
     }
   }
 
@@ -226,10 +228,11 @@ public final class AlluxioMasterRestServiceHandler {
   @ReturnType("java.lang.Long")
   public Response getUfsUsedBytes() {
     try {
-      return Response.ok(mUfs.getSpace(mUfsRoot, UnderFileSystem.SpaceType.SPACE_USED)).build();
+      return RestUtils
+          .createResponse(mUfs.getSpace(mUfsRoot, UnderFileSystem.SpaceType.SPACE_USED));
     } catch (IOException e) {
       LOG.warn(e.getMessage());
-      return Response.serverError().entity(e.getMessage()).build();
+      return RestUtils.createErrorResponse(e.getMessage());
     }
   }
 
@@ -242,10 +245,11 @@ public final class AlluxioMasterRestServiceHandler {
   @ReturnType("java.lang.Long")
   public Response getUfsFreeBytes() {
     try {
-      return Response.ok(mUfs.getSpace(mUfsRoot, UnderFileSystem.SpaceType.SPACE_FREE)).build();
+      return RestUtils
+          .createResponse(mUfs.getSpace(mUfsRoot, UnderFileSystem.SpaceType.SPACE_FREE));
     } catch (IOException e) {
       LOG.warn(e.getMessage());
-      return Response.serverError().entity(e.getMessage()).build();
+      return RestUtils.createErrorResponse(e.getMessage());
     }
   }
 
@@ -281,7 +285,7 @@ public final class AlluxioMasterRestServiceHandler {
     for (Map.Entry<String, Long> tierBytes : mBlockMaster.getTotalBytesOnTiers().entrySet()) {
       capacityBytesOnTiers.put(tierBytes.getKey(), tierBytes.getValue());
     }
-    return Response.ok(capacityBytesOnTiers).build();
+    return RestUtils.createResponse(capacityBytesOnTiers);
   }
 
   /**
@@ -297,7 +301,7 @@ public final class AlluxioMasterRestServiceHandler {
     for (Map.Entry<String, Long> tierBytes : mBlockMaster.getUsedBytesOnTiers().entrySet()) {
       usedBytesOnTiers.put(tierBytes.getKey(), tierBytes.getValue());
     }
-    return Response.ok(usedBytesOnTiers).build();
+    return RestUtils.createResponse(usedBytesOnTiers);
   }
 
   /**
@@ -308,7 +312,7 @@ public final class AlluxioMasterRestServiceHandler {
   @Path(GET_WORKER_COUNT)
   @ReturnType("java.lang.Integer")
   public Response getWorkerCount() {
-    return Response.ok(mBlockMaster.getWorkerCount()).build();
+    return RestUtils.createResponse(mBlockMaster.getWorkerCount());
   }
 
   /**
@@ -319,6 +323,6 @@ public final class AlluxioMasterRestServiceHandler {
   @Path(GET_WORKER_INFO_LIST)
   @ReturnType("java.util.List<alluxio.wire.WorkerInfo>")
   public Response getWorkerInfoList() {
-    return Response.ok(mBlockMaster.getWorkerInfoList()).build();
+    return RestUtils.createResponse(mBlockMaster.getWorkerInfoList());
   }
 }
