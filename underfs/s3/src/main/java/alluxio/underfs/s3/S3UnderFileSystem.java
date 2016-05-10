@@ -17,7 +17,6 @@ import alluxio.Constants;
 import alluxio.underfs.UnderFileSystem;
 import alluxio.util.io.PathUtils;
 
-import com.google.common.base.Preconditions;
 import org.jets3t.service.Jets3tProperties;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.ServiceException;
@@ -80,18 +79,13 @@ public class S3UnderFileSystem extends UnderFileSystem {
    *
    * @param uri the {@link AlluxioURI} for this UFS
    * @param conf the configuration for Alluxio
+   * @param awsCredentials AWS Credentials configuration for S3 Access
    * @throws ServiceException when a connection to S3 could not be created
    */
-  public S3UnderFileSystem(AlluxioURI uri, Configuration conf) throws ServiceException {
+  public S3UnderFileSystem(AlluxioURI uri, Configuration conf, AWSCredentials awsCredentials)
+      throws ServiceException {
     super(uri, conf);
     String bucketName = uri.getHost();
-    Preconditions.checkArgument(conf.containsKey(Constants.S3_ACCESS_KEY),
-        "Property " + Constants.S3_ACCESS_KEY + " is required to connect to S3");
-    Preconditions.checkArgument(conf.containsKey(Constants.S3_SECRET_KEY),
-        "Property " + Constants.S3_SECRET_KEY + " is required to connect to S3");
-    AWSCredentials awsCredentials =
-        new AWSCredentials(conf.get(Constants.S3_ACCESS_KEY), conf.get(
-            Constants.S3_SECRET_KEY));
     mBucketName = bucketName;
 
     Jets3tProperties props = new Jets3tProperties();
@@ -103,6 +97,20 @@ public class S3UnderFileSystem extends UnderFileSystem {
     if (conf.containsKey(Constants.UNDERFS_S3_PROXY_HTTPS_ONLY)) {
       props.setProperty("s3service.https-only",
           Boolean.toString(conf.getBoolean(Constants.UNDERFS_S3_PROXY_HTTPS_ONLY)));
+    }
+    if (conf.containsKey(Constants.UNDERFS_S3_ENDPOINT)) {
+      props.setProperty("s3service.s3-endpoint", conf.get(Constants.UNDERFS_S3_ENDPOINT));
+      if (conf.getBoolean(Constants.UNDERFS_S3_PROXY_HTTPS_ONLY)) {
+        props.setProperty("s3service.s3-endpoint-https-port",
+            conf.get(Constants.UNDERFS_S3_ENDPOINT_HTTPS_PORT));
+      } else {
+        props.setProperty("s3service.s3-endpoint-http-port",
+            conf.get(Constants.UNDERFS_S3_ENDPOINT_HTTP_PORT));
+      }
+    }
+    if (conf.containsKey(Constants.UNDERFS_S3_DISABLE_DNS_BUCKETS)) {
+      props.setProperty("s3service.disable-dns-buckets",
+          conf.get(Constants.UNDERFS_S3_DISABLE_DNS_BUCKETS));
     }
     LOG.debug("Initializing S3 underFs with properties: {}", props.getProperties());
     mClient = new RestS3Service(awsCredentials, null, null, props);
