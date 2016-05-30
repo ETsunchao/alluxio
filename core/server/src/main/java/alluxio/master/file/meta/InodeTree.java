@@ -1,6 +1,6 @@
 /*
  * The Alluxio Open Foundation licenses this work under the Apache License, version 2.0
- * (the “License”). You may not use this work except in compliance with the License, which is
+ * (the "License"). You may not use this work except in compliance with the License, which is
  * available at www.apache.org/licenses/LICENSE-2.0
  *
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
@@ -102,7 +102,7 @@ public final class InodeTree implements JournalCheckpointStreamable {
   @SuppressWarnings("unchecked")
   private final IndexedSet<Inode<?>> mInodes = new IndexedSet<>(mIdIndex);
   /** A set of inode ids representing pinned inode files. */
-  private final Set<Long> mPinnedInodeFileIds = new ConcurrentHashSet<>();
+  private final Set<Long> mPinnedInodeFileIds = new ConcurrentHashSet<>(64, 0.90f, 64);
 
   /**
    * Inode id management. Inode ids are essentially block ids.
@@ -636,7 +636,7 @@ public final class InodeTree implements JournalCheckpointStreamable {
 
     // Extend the inodePath with the created inodes.
     extensibleInodePath.getInodes().addAll(createdInodes);
-    LOG.debug("createFile: File Created: {} parent: ", lastInode, currentInodeDirectory);
+    LOG.debug("createFile: File Created: {} parent: {}", lastInode, currentInodeDirectory);
     return new CreatePathResult(modifiedInodes, createdInodes, existingNonPersisted);
   }
 
