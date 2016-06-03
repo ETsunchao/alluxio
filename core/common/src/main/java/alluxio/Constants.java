@@ -68,6 +68,8 @@ public final class Constants {
   public static final String SCHEME_FT = "alluxio-ft";
   public static final String HEADER_FT = SCHEME_FT + "://";
 
+  public static final String HEADER_JSS = "jss://";
+
   public static final String HEADER_OSS = "oss://";
 
   public static final String HEADER_S3 = "s3://";
@@ -141,6 +143,11 @@ public final class Constants {
   public static final String UNDERFS_GLUSTERFS_MOUNTS = "alluxio.underfs.glusterfs.mounts";
   public static final String UNDERFS_GLUSTERFS_MR_DIR =
       "alluxio.underfs.glusterfs.mapred.system.dir";
+  public static final String UNDERFS_JSS_CONNECT_MAX = "alluxio.underfs.jss.connection.max";
+  public static final String UNDERFS_JSS_CONNECT_TIMEOUT =
+    "alluxio.underfs.jss.connection.timeout.ms";
+  public static final String UNDERFS_JSS_CACHE_TTL = "alluxio.underfs.jss.cache.ttl";
+  public static final String UNDERFS_JSS_SOCKET_TIMEOUT = "alluxio.underfs.jss.socket.timeout.ms";
   public static final String UNDERFS_OSS_CONNECT_MAX = "alluxio.underfs.oss.connection.max";
   public static final String UNDERFS_OSS_CONNECT_TIMEOUT =
       "alluxio.underfs.oss.connection.timeout.ms";
@@ -400,6 +407,10 @@ public final class Constants {
   public static final String FUSE_FS_ROOT = "alluxio.fuse.fs.root";
   /** FUSE file system name. */
   public static final String FUSE_FS_NAME = "alluxio.fuse.fs.name";
+
+  public static final String JSS_ACCESS_KEY = "fs.jss.accessKey";
+  public static final String JSS_SECRET_KEY = "fs.jss.secretKey";
+  public static final String JSS_ENDPOINT = "fs.jss.endpoint";
 
   public static final String OSS_ACCESS_KEY = "fs.oss.accessKeyId";
   public static final String OSS_SECRET_KEY = "fs.oss.accessKeySecret";

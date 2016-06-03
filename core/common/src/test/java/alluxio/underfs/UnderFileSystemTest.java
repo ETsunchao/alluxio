@@ -88,6 +88,18 @@ public final class UnderFileSystemTest {
     Assert.assertEquals(result.getFirst(), "oss://localhost:19998");
     Assert.assertEquals(result.getSecond(), "/path");
 
+    result = UnderFileSystem.parse(new AlluxioURI("jss://localhost:19998"), mConf);
+    Assert.assertEquals(result.getFirst(), "jss://localhost:19998");
+    Assert.assertEquals(result.getSecond(), "/");
+
+    result = UnderFileSystem.parse(new AlluxioURI("jss://localhost:19998/"), mConf);
+    Assert.assertEquals(result.getFirst(), "jss://localhost:19998");
+    Assert.assertEquals(result.getSecond(), "/");
+
+    result = UnderFileSystem.parse(new AlluxioURI("jss://localhost:19998/path"), mConf);
+    Assert.assertEquals(result.getFirst(), "jss://localhost:19998");
+    Assert.assertEquals(result.getSecond(), "/path");
+
     Assert.assertEquals(UnderFileSystem.parse(AlluxioURI.EMPTY_URI, mConf), null);
     Assert.assertEquals(UnderFileSystem.parse(new AlluxioURI("anythingElse"), mConf), null);
   }
@@ -125,6 +137,11 @@ public final class UnderFileSystemTest {
     Assert.assertNull(
         "No UnderFileSystemFactory should exist for HDFS paths as it requires a separate module",
         factory);
+
+    factory = UnderFileSystemRegistry.find("jss://localhost/test/path", mConf);
+    Assert.assertNull(
+      "No UnderFileSystemFactory should exist for JSS paths as it requires a separate module",
+      factory);
 
     factory = UnderFileSystemRegistry.find("oss://localhost/test/path", mConf);
     Assert.assertNull(

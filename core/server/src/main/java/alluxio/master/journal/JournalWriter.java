@@ -363,11 +363,12 @@ public final class JournalWriter {
       }
       boolean overSize = mDataOutputStream.size() >= mMaxLogSize;
       if (overSize || mUfs.getUnderFSType() == UnderFileSystem.UnderFSType.S3
-          || mUfs.getUnderFSType() == UnderFileSystem.UnderFSType.OSS) {
+          || mUfs.getUnderFSType() == UnderFileSystem.UnderFSType.OSS
+          || mUfs.getUnderFSType() == UnderFileSystem.UnderFSType.JSS) {
         // (1) The log file is oversize, needs to be rotated. Or
-        // (2) Underfs is S3 or OSS, flush on S3OutputStream/OSSOutputStream will only flush to
-        // local temporary file,
-        // call close and complete the log to sync the journal entry to S3/OSS.
+        // (2) Underfs is S3 or OSS or JSS, flush on S3OutputStream/OSSOutputStream/JSSOutputSteam
+        // will only flush to local temporary file,
+        // call close and complete the log to sync the journal entry to S3/OSS/JSS.
         if (overSize) {
           LOG.info("Rotating log file. size: {} maxSize: {}", mDataOutputStream.size(),
               mMaxLogSize);

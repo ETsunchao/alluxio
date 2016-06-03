@@ -1,7 +1,7 @@
 /*
- * The Alluxio Open Foundation licenses this work under the Apache License, version 2.0
- * (the "License"). You may not use this work except in compliance with the License, which is
- * available at www.apache.org/licenses/LICENSE-2.0
+ * The Alluxio Open Foundation licenses this work under the Apache License, version 2.0 (the
+ * "License"). You may not use this work except in compliance with the License, which is available
+ * at www.apache.org/licenses/LICENSE-2.0
  *
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
  * either express or implied, as more fully set forth in the License.
@@ -82,7 +82,7 @@ public abstract class AbstractLocalAlluxioCluster {
    * @throws IOException if an I/O error occurs
    * @throws ConnectionFailedException if network connection failed
    */
-  public void start() throws IOException, ConnectionFailedException  {
+  public void start() throws IOException, ConnectionFailedException {
     start(newTestConf());
   }
 
@@ -209,8 +209,8 @@ public abstract class AbstractLocalAlluxioCluster {
    * @throws IOException if an I/O error occurs
    * @throws ConnectionFailedException if network connection failed
    */
-  protected abstract void startWorker(Configuration conf) throws IOException,
-      ConnectionFailedException;
+  protected abstract void startWorker(Configuration conf)
+      throws IOException, ConnectionFailedException;
 
   /**
    * Sets up corresponding directories for tests.
@@ -229,7 +229,7 @@ public abstract class AbstractLocalAlluxioCluster {
 
     // Creates storage dirs for worker
     int numLevel = conf.getInt(Constants.WORKER_TIERED_STORE_LEVELS);
-    for (int level = 0; level < numLevel; level++) {
+    for (int level = 0; level < numLevel; level ++) {
       String tierLevelDirPath =
           String.format(Constants.WORKER_TIERED_STORE_LEVEL_DIRS_PATH_FORMAT, level);
       String[] dirPaths = conf.get(tierLevelDirPath).split(",");
@@ -264,7 +264,8 @@ public abstract class AbstractLocalAlluxioCluster {
     // instead of comparing classnames.
     if (mUfsCluster.getClass().getSimpleName().equals("LocalMiniDFSCluster")
         || mUfsCluster.getClass().getSimpleName().equals("S3UnderStorageCluster")
-        || mUfsCluster.getClass().getSimpleName().equals("OSSUnderStorageCluster")) {
+        || mUfsCluster.getClass().getSimpleName().equals("OSSUnderStorageCluster")
+        || mUfsCluster.getClass().getSimpleName().equals("JSSUnderStorageCluster")) {
       String ufsAddress = mUfsCluster.getUnderFilesystemAddress() + mHome;
       conf.set(Constants.UNDERFS_ADDRESS, ufsAddress);
     }
@@ -383,7 +384,7 @@ public abstract class AbstractLocalAlluxioCluster {
         Long.toString(mWorkerCapacityBytes));
 
     int numLevel = testConf.getInt(Constants.WORKER_TIERED_STORE_LEVELS);
-    for (int level = 1; level < numLevel; level++) {
+    for (int level = 1; level < numLevel; level ++) {
       String tierLevelDirPath =
           String.format(Constants.WORKER_TIERED_STORE_LEVEL_DIRS_PATH_FORMAT, level);
       String[] dirPaths = testConf.get(tierLevelDirPath).split(",");
@@ -393,7 +394,7 @@ public abstract class AbstractLocalAlluxioCluster {
         newPaths.add(newPath);
       }
       testConf.set(String.format(Constants.WORKER_TIERED_STORE_LEVEL_DIRS_PATH_FORMAT, level),
-              Joiner.on(',').join(newPaths));
+          Joiner.on(',').join(newPaths));
     }
 
     // For some test profiles, default properties get overwritten by system properties (e.g., s3
@@ -467,8 +468,7 @@ public abstract class AbstractLocalAlluxioCluster {
    * @throws IOException when the operation fails
    */
   protected void setAlluxioHome() throws IOException {
-    mHome =
-        File.createTempFile("Alluxio", "U" + System.currentTimeMillis()).getAbsolutePath();
+    mHome = File.createTempFile("Alluxio", "U" + System.currentTimeMillis()).getAbsolutePath();
     // Make a copy of mHome.
     final String home = mHome;
     Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {

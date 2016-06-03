@@ -30,6 +30,7 @@
     <module>swift</module>
     <module>s3</module>
     <module>gcs</module>
+    <module>jss</module>
   </modules>
 
 

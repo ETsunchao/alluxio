@@ -127,6 +127,7 @@ public abstract class UnderFileSystem {
     SWIFT,
     OSS,
     GCS,
+    JSS,
   }
 
   /**
@@ -187,7 +188,7 @@ public abstract class UnderFileSystem {
       if (header.equals(Constants.HEADER) || header.equals(Constants.HEADER_FT)
           || isHadoopUnderFS(header, configuration) || header.equals(Constants.HEADER_S3)
           || header.equals(Constants.HEADER_S3N) || header.equals(Constants.HEADER_OSS)
-          || header.equals(Constants.HEADER_GCS)) {
+          || header.equals(Constants.HEADER_GCS) || header.equals(Constants.HEADER_JSS)) {
         if (path.getPath().isEmpty()) {
           return new Pair<>(header + authority, AlluxioURI.SEPARATOR);
         } else {
