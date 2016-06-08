@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -218,12 +220,13 @@ public class JSSUnderFileSystem extends UnderFileSystem {
   public long getModificationTimeMs(String path) throws IOException {
     StorageObject details = getObjectDetails(path);
     if (details != null) {
-      SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss ");
+      SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US);
       try {
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date date = sdf.parse(details.getLastModified());
         return date.getTime();
       } catch (ParseException e) {
-        throw new FileNotFoundException(path);
+        throw new IOException(e);
       }
     } else {
       throw new FileNotFoundException(path);
@@ -344,7 +347,13 @@ public class JSSUnderFileSystem extends UnderFileSystem {
       src = stripPrefixIfPresent(src);
       dst = stripPrefixIfPresent(dst);
       LOG.info("Copying {} to {}", src, dst);
-      sJSSOperator.getJSSClient().bucket(mBucketName).object(dst).copyFrom(mBucketName, src).copy();
+      StorageObject details = getObjectDetails(src);
+      if ((null != details) && (0 != details.getContentLength())) {
+        sJSSOperator.getJSSClient().bucket(mBucketName).object(dst).copyFrom(mBucketName, src).copy();
+      } else {
+        sJSSOperator.getJSSClient().bucket(mBucketName).object(dst).put();
+      }
+
       return true;
     } catch (Exception e) {
       LOG.error("Failed to rename file {} to {}", src, dst, e);
