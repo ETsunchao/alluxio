@@ -349,7 +349,8 @@ public class JSSUnderFileSystem extends UnderFileSystem {
       LOG.info("Copying {} to {}", src, dst);
       StorageObject details = getObjectDetails(src);
       if ((null != details) && (0 != details.getContentLength())) {
-        sJSSOperator.getJSSClient().bucket(mBucketName).object(dst).copyFrom(mBucketName, src).copy();
+        sJSSOperator.getJSSClient().bucket(mBucketName).object(dst).copyFrom(mBucketName, src)
+            .copy();
       } else {
         sJSSOperator.getJSSClient().bucket(mBucketName).object(dst).put();
       }
