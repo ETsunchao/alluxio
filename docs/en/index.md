@@ -12,7 +12,7 @@ faster than existing solutions.
 
 In the big data ecosystem, Alluxio lies between computation frameworks or jobs, such as Apache
 Spark, Apache MapReduce, or Apache Flink, and various kinds of storage systems, such as Amazon S3,
-Google Cloud Storage, OpenStack Swift, GlusterFS, HDFS, Ceph, or Alibaba OSS. Alluxio brings
+Google Cloud Storage, OpenStack Swift, GlusterFS, HDFS, Ceph, Alibaba OSS, or Jingdong JSS. Alluxio brings
 significant performance improvement to the ecosystem; for example, [Baidu](https://www.baidu.com)
 uses Alluxio to improve speedup the throughput of their data analytics pipeline
 [30 times](http://www.alluxio.com/assets/uploads/2016/02/Baidu-Case-Study.pdf). Barclays makes the

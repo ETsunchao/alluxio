@@ -15,6 +15,7 @@ group: Resources
 * [Huawei](http://www.huawei.com/)
 * [IBM Research](http://www.research.ibm.com/)
 * [Intel](http://www.intel.com/)
+* [Jingdong](http://www.jd.com/)
 * [Neusoft](http://www.neusoft.com/)
 * [Qunar](http://www.qunar.com/)
 * [Radicalbit](http://www.radicalbit.io)
@@ -31,4 +32,5 @@ group: Resources
 * [Openstack Swift](http://docs.openstack.org/developer/swift/)
 * [GlusterFS](http://www.gluster.org/)
 * [Alibaba OSS](http://www.aliyun.com/product/oss/?lang=en)
+* [Jingdong JSS](http://jcloud.com/products/cloudstorage.html)
 * [Alluxio Service for Ambari](https://github.com/chuyqa/tachyon-ambari-service)

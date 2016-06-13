@@ -257,9 +257,10 @@ public abstract class AbstractLocalAlluxioCluster {
     UnderFileSystemUtils
         .touch(PathUtils.concatPath(journalFolder, "_format_" + System.currentTimeMillis()), conf);
 
-    // If we are using the LocalMiniDFSCluster or S3UnderStorageCluster or OSSUnderStorageCluster,
-    // we need to update the UNDERFS_ADDRESS to point to the cluster's current address.
-    // This must happen after UFS is started with UnderFileSystemCluster.get().
+    // If we are using the LocalMiniDFSCluster or S3UnderStorageCluster or OSSUnderStorageCluster
+    // or JSSUnderStorageCluster, we need to update the UNDERFS_ADDRESS to point to
+    // the cluster's current address. This must happen after UFS is started with
+    // UnderFileSystemCluster.get().
     // TODO(andrew): Move logic to the alluxio-tests module so that we can use instanceof here
     // instead of comparing classnames.
     if (mUfsCluster.getClass().getSimpleName().equals("LocalMiniDFSCluster")

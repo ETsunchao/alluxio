@@ -100,6 +100,9 @@ function bootstrapConf {
     swift)
       ALLUXIO_UNDERFS_ADDRESS="swift://swift-container/"
       ;;
+    jss)
+      ALLUXIO_UNDERFS_ADDRESS="jss://bucket/directory/"
+      ;;
     *)
       echo ${usage}
       exit 1

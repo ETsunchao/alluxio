@@ -19,6 +19,7 @@ or let us know by email (project.alluxio@gmail.com) or
 * [Huawei](http://www.huawei.com/)
 * [IBM Research](http://www.research.ibm.com/)
 * [Intel](http://www.intel.com/)
+* [Jingdong](http://www.jd.com/)
 * [Neusoft](http://www.neusoft.com/)
 * [Qunar](http://www.qunar.com/)
 * [Radicalbit](http://www.radicalbit.io)
@@ -36,4 +37,5 @@ Here is a list that tracks external software projects that supplement Alluxio an
 * [Apache Spark](http://spark.apache.org/)
 * [Apache Zeppelin](http://zeppelin-project.org/)
 * [GlusterFS](http://www.gluster.org/)
+* [Jingdong](http://www.jcloud.com/products/cloudstorage.html)
 * [Openstack Swift](http://docs.openstack.org/developer/swift/)

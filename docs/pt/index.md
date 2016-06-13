@@ -12,7 +12,7 @@ permite o acesso ao dado em ordens de magnitude mais rápidas que as soluções 
 
 Em um ecosistema `big data`, o Alluxio posiciona-se entre as estruturas computacionais e as rotinas, 
 como o `Apache Spark`, `Apache MapReduce` e o `Apache Flink`, e também como vários outros tipos de 
-sistemas de armazenamento, como `Amazon S3`, `OpenStack Swift`, `GlusterFS, HDFS`, `Ceph` ou `OSS`. O Alluxio 
+sistemas de armazenamento, como `Amazon S3`, `OpenStack Swift`, `GlusterFS, HDFS`, `Ceph`, `OSS` ou `JSS`. O Alluxio 
 provoca importantes aprimoramentos de desempenho para o ecosistema, por exemplo, o 
 [Baidu](https://www.baidu.com) utiliza o Alluxio para aprimorar a velocidade de vazão das análises 
 de seus dados em até [30 vezes](http://www.alluxio.com/assets/uploads/2016/02/Baidu-Case-Study.pdf).

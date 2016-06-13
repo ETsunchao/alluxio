@@ -314,7 +314,7 @@
                 <!-- Change "yourSecretKey" to your jss access secret key for this test -->
                 <fs.jss.accessKeySecret>yourSecretKey</fs.jss.accessKeySecret>
                 <!-- Change this endpoint for your jss service address for this test -->
-                <fs.jss.endpoint>storage.jd.com</fs.jss.endpoint>
+                <fs.jss.endpoint>s-bj.jcloud.com</fs.jss.endpoint>
                 <!-- Change "your-bucket" to your jss bucket for this test -->
                 <ossBucket>jss://your-bucket/alluxio-test/</ossBucket>
               </systemPropertyVariables>
