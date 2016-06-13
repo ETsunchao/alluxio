@@ -116,6 +116,9 @@ public enum ExceptionMessage {
   RENAME_CANNOT_BE_TO_SUBDIRECTORY("Cannot rename because {0} is a prefix of {1}"),
   ROOT_CANNOT_BE_RENAMED("The root directory cannot be renamed"),
 
+  // block master
+  NO_WORKER_FOUND("No worker with ID {0} is found"),
+
   // file system master ufs
   FAILED_UFS_CREATE("Failed to create {0} in the under file system"),
   FAILED_UFS_RENAME("Failed to rename {0} to {1} in the under file system"),
@@ -173,6 +176,9 @@ public enum ExceptionMessage {
   KEY_VALUE_TOO_LARGE("Unable to put key-value pair: key {0} bytes, value {1} bytes"),
   INVALID_KEY_VALUE_STORE_URI("The URI {0} exists but is not a key-value store"),
   KEY_ALREADY_EXISTS("The input key already exists in the key-value store"),
+
+  // block worker
+  FAILED_COMMIT_BLOCK_TO_MASTER("Failed to commit block {0} to master."),
 
   // SEMICOLON! minimize merge conflicts by putting it on its own line
   ;
